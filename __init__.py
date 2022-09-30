@@ -1,6 +1,6 @@
 import socket
 from unittest import result
-from shell_run import shell_commands, shell_command
+from shell_run import async_shell_command
 import platform
 import asyncio
 
@@ -32,8 +32,8 @@ class Netscan:
         # run commands
         commands_to_run = []
         for command in commands:
-            commands_to_run.append(shell_command(command[0], self._device_found, self._errcallback, command[1]))
-            await asyncio.gather(*commands_to_run)
+            commands_to_run.append(async_shell_command(command[0], self._device_found, self._errcallback, command[1]))
+        await asyncio.gather(*commands_to_run)
 
     def _device_found(self, _, ip):
         self.devices.append(ip)
