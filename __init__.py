@@ -1,6 +1,7 @@
 import socket
 from unittest import result
-from shell_run import async_shell_command
+
+from .shell_run import async_shell_command
 import platform
 import asyncio
 
@@ -9,25 +10,32 @@ class Netscan:
     def __init__(self) -> None:
         self.base_ip = get_base_ip()  # get the base ip of the network
         self.devices = []
+
+        self.try_count = 2
         asyncio.run(self._get_devices(self.base_ip))
 
-    async def _get_devices(self, base_ip, try_count=1):
+    async def _get_devices(self, base_ip):
         commands = []
-        # generate commands to be run
-        for i in range(2, 255):
-            # if the script is running on linux
-            if platform == 'linux' or 'linux2':
-                command = f"ping -c {try_count} {base_ip}.{i}"
-                commands.append([command, base_ip + "." + str(i)])
+        # if no network is connected to the device
+        if "127.0.0" in base_ip:
+            self.devices.append('127.0.0.1')
+            return
+        else:
+            # generate commands to be run
+            for i in range(2, 255):
+                # if the script is running on linux
+                if platform == 'linux' or 'linux2':
+                    command = f"ping -c {self.try_count} {base_ip}.{i}"
+                    commands.append([command, base_ip + "." + str(i)])
 
-            # if the script is running on Windows
-            if platform == 'win32':
-                command = f"ping -n {try_count} {base_ip}.{i}"
-                commands.append([command, base_ip + "." + str(i)])
+                # if the script is running on Windows
+                if platform == 'win32':
+                    command = f"ping -n {self.try_count} {base_ip}.{i}"
+                    commands.append([command, base_ip + "." + str(i)])
 
-            # if the script is running on OS X
-            if platform == 'darwin':
-                pass
+                # if the script is running on OS X
+                if platform == 'darwin':
+                    pass
 
         # run commands
         commands_to_run = []
