@@ -34,7 +34,7 @@ def shell_commands(commands: list, callback, errcallback):
 async def async_shell_command(command: str, callback, errcallback, args):
     
     # run a shell command as a subprosess
-    Process = await asyncio.create_subprocessasync_shell(
+    Process = await asyncio.create_subprocess_shell(
         command,
         stdout=asyncio.subprocess.PIPE,
         stderr=asyncio.subprocess.PIPE
